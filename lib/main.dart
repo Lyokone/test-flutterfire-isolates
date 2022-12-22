@@ -4,12 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:isolate_agents/isolate_agents.dart';
+import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:path_provider/path_provider.dart';
 
 @pragma('vm:entry-point')
-Future<void> computeFunction() async {
+Future<void> computeFunction(String arg) async {
   print('running in isolate');
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
   final z = DateTime.now().millisecondsSinceEpoch;
@@ -103,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => _counter++);
 
     // Trigger computation in Isolate
-    await Agent.create(computeFunction);
+    await flutterCompute(computeFunction, "foo");
 
     // Load a file to upload
     final z = DateTime.now().millisecondsSinceEpoch;
